@@ -1,7 +1,7 @@
 <html>
   <head></head>
     <body>
-      <h1>TEST</h1>
+      <h1 id="name"></h1>
       <h1>PLAYLISTS</h1>
       <div id="myList"></div>
       <a href="/playlist" class="btn btn-primary">Spotify Playlists</a>
@@ -23,7 +23,7 @@
             for (var i = 0; i < response.items.length; i++) {
               var item = document.createElement('li');
               item.appendChild(document.createTextNode(response.items[i].name));
-              console.log(response.items[i].name);
+//              console.log(response.items[i].name);
               list.appendChild(item);
             }
             document.getElementById('myList').appendChild(list);
@@ -40,6 +40,14 @@
               listify(response);
             }
           });
+          $.ajax({
+            url: 'https://api.spotify.com/v1/me',
+            headers: { 'Authorization': 'Bearer ' + access_token },
+            success: function(response) {
+              console.log(response);
+              document.getElementById('name').innerHTML = response.id;
+            }
+          })
         })();
     </script>
   </body>
