@@ -5,6 +5,7 @@ var app = express();
 
 app.use('/', express.static(__dirname + '/'));
 app.use('/myTest', express.static(__dirname + '/test.html'));
+app.use('/playlist', express.static(__dirname + '/playlist.html'));
 
 app.get('/hello', function(req, res){
     res.send('hello');
@@ -72,7 +73,8 @@ app.get('/callback', function(req,res) {
             
             res.redirect('/myTest#' + 
                 querystring.stringify({
-                    access_token: access_token
+                    access_token: access_token,
+                    message: 'HELLO_WORLD'
             }));
         }
     });
@@ -90,15 +92,20 @@ app.get('/playlists',function(req,res) {
         headers: { 'Authorization': 'Bearer ' + access_token },
         json: true
     }
-    request.get(options, function(error, response, body) {
-        for (var i = 0; i < body.items.length; i++) {
-            console.log(body.items[i].name);
-        }
-        
-    });
+//    request.get(options, function(error, response, body) {
+//        for (var i = 0; i < body.items.length; i++) {
+//            console.log(body.items[i].name);
+//        }
+//        
+//    });
     
     res.redirect('/myTest');
 });
+
+app.get('/playlist',function(req,res) {
+  console.log(req);
+  res.redirect('/#');
+})
 
 app.get('/myTest',function(req,res) {
     console.log('HERE');

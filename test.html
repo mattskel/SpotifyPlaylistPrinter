@@ -18,14 +18,16 @@
             return hashParams;
           }
           
-          function listify(response) {
+          function listify(response, access_token) {
+//            console.log(response);
             var list = document.createElement('ul');
             for (var i = 0; i < response.items.length; i++) {
               var item = document.createElement('li');
               var a = document.createElement('a');
-              a.setAttribute('href', "/#");
+              a.setAttribute('href', "/playlist#id=" + response.items[i].id + "&access_token=" + access_token);
 //              item.appendChild(document.createTextNode(response.items[i].name));
               a.appendChild(document.createTextNode(response.items[i].name));
+              console.log(response.items[i]);
               item.appendChild(a);
               list.appendChild(item);
             }
@@ -40,17 +42,25 @@
             url: 'https://api.spotify.com/v1/me/playlists',
             headers: { 'Authorization': 'Bearer ' + access_token },
             success: function(response) {
-              listify(response);
+              listify(response,access_token);
             }
           });
           $.ajax({
             url: 'https://api.spotify.com/v1/me',
             headers: { 'Authorization': 'Bearer ' + access_token },
             success: function(response) {
-              console.log(response);
+//              console.log(access_token);
               document.getElementById('name').innerHTML = response.id;
             }
-          })
+          });
+          $.ajax({
+//            url: 'https://api.spotify.com/v1/users/mattskelley-au/playlists/4D7jMhi6n60TZi9MBuvdYk',
+            url: 'https://api.spotify.com/v1/users/me/playlists/4D7jMhi6n60TZi9MBuvdYk',
+            headers: { 'Authorization': 'Bearer ' + access_token },
+            success: function(response) {
+              console.log(response);
+            }
+          });
         })();
     </script>
   </body>
