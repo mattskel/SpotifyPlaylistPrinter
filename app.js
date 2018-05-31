@@ -82,7 +82,7 @@ app.get('/callback', function(req,res) {
     
 });
 
-app.get('/playlist',function(req,res) {
+app.get('/playlists',function(req,res) {
     
     var options = {
 //        url: 'https://api.spotify.com/v1/me',
