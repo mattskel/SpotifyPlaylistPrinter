@@ -22,19 +22,20 @@
           for (var i = 0; i < response.tracks.items.length; i++) {
             var item = document.createElement('li');
             var track = response.tracks.items[i].track;
-            
             item.setAttribute('id',track.id);
             
-            item.appendChild(document.createTextNode(track.artists[0].name + "-" + track.name));
+            console.log(track.id + " " + track.name);
+            
+            item.appendChild(document.createTextNode(track.artists[0].name + ", " + track.name));
             list.appendChild(item);
             $.ajax({
               url: 'https://api.spotify.com/v1/audio-features/' + track.id,
               headers: { 'Authorization': 'Bearer ' + access_token },
               success: function(response) {
-//                console.log(response);
+                console.log(response);
 //                temp = response.tempo;
                 
-//                document.getElementById(response.id)
+                document.getElementById(response.id).innerHTML = document.getElementById(response.id).innerHTML + " - " + response.tempo + "bpm";
                 
               }
             });
