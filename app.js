@@ -6,6 +6,7 @@ var app = express();
 app.use('/', express.static(__dirname + '/'));
 app.use('/myTest', express.static(__dirname + '/test.html'));
 app.use('/playlist', express.static(__dirname + '/playlist.html'));
+//app.use('/newPlaylist',express.static(__dirname + '/data.html'));
 
 app.get('/hello', function(req, res){
     res.send('hello');
@@ -16,9 +17,6 @@ app.get('/main', function(req, res) {
   res.render(__dirname + "/test.html", {name:name});
 });
 
-// CLientID: a2ff816c53a341db849e76d58e57cd92
-// CLientSecret: deb4764130d840ca863761a3e781877f
-
 var client_id = 'a2ff816c53a341db849e76d58e57cd92';
 var client_secret = 'deb4764130d840ca863761a3e781877f';
 var scope = 'user-read-private user-read-email playlist-modify-private playlist-modify-public';
@@ -26,6 +24,9 @@ var redirect_uri = 'http://localhost:3000/callback';
 
 var code = '';
 var access_token = '';
+
+//var global_string = 'my string';
+//var global_array = [];
 
 app.get('/login', function(req,res) {
     res.redirect('https://accounts.spotify.com/authorize?' +
@@ -56,13 +57,11 @@ app.get('/callback', function(req,res) {
     }; 
     
     request.post(authOptions, function(error, response, body) {
-        console.log(body);
         if (!error && response.statusCode === 200) {
             access_token = body.access_token;
 //            var access_token = body.access_token;
             
             var options = {
-//                url: 'https://api.spotify.com/v1/me',
                 url: 'https://api.spotify.com/v1/me/playlists',
                 headers: { 'Authorization': 'Bearer ' + access_token },
                 json: true
@@ -92,54 +91,74 @@ app.get('/playlists',function(req,res) {
         headers: { 'Authorization': 'Bearer ' + access_token },
         json: true
     }
-//    request.get(options, function(error, response, body) {
-//        for (var i = 0; i < body.items.length; i++) {
-//            console.log(body.items[i].name);
-//        }
-//        
-//    });
     
     res.redirect('/myTest');
 });
 
 app.get('/playlist',function(req,res) {
-  console.log(req);
+//  console.log(req);
   res.redirect('/#');
 })
-
-//app.get('/myTest',function(req,res) {
-//    console.log('HERE');
-//});
 
 app.get('/newPlaylist', function(req,res) {
   console.log('New Playlist');
   
-//  POST https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+  var access_token = req.query.access_token;
+  var playlist_id = req.query.playlist_id;
   
-  var access_token = 'BQCx8EEaI-WlGwgvmKOHORyfcjJAZpmCdy9I_nDy9u7Z5JUizCmC0TZfXsqklbqoMhO-nuQ6DQER-haRtdVWTY0EfgKpGjNMnCl_Vkrf4-pPQvL-E1dr1lzrQVbpg9e8VLPAtUWx3M4ToQfLntXK3hB3NhT5FCCYgDIC2CgpDtuOJ_3KVqszj991WhhhvxvWG2UbZ6_SU5g88FRjK7jjN7_eCeDgrywV3Q';
-  
-  var track_id = '4D7jMhi6n60TZi9MBuvdYk';
-  
+  // Get the tracks from a playlist and print to the console screen
   var options = {
-//    url: 'https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks'
-    url: 'https://api.spotify.com/v1/users/mattskelley-au/playlists/7nOq1mWncPNUmI0tEP83g8/tracks',
-    qs: {
-      uris:"spotify:track:4iV5W9uYEdYUVa79Axb7Rh"
-    },
+    url: 'https://api.spotify.com/v1/users/me/playlists/' + playlist_id + '/tracks',
     headers: { 'Authorization': 'Bearer ' + access_token },
     json: true
-  }   
+  }
   
-  request.post(options, function(error, response, body) {
-    console.log(response);
-    console.log(body);
-  });
+  request.get(options, function(error, response, body) {
+    var track_ids = [];
+    for (var i = 0; i < body.items.length; i++) {
+      track_ids.push(body.items[i].track.id);
+    }
+    var options = {
+      url: 'https://api.spotify.com/v1/audio-features',
+      qs: {
+        ids: track_ids.join(",")
+      },
+      headers: { 'Authorization': 'Bearer ' + access_token },
+      json: true
+    }
+    request.get(options,function(error,response,body) {
+      var tracks = []
+      for (var i = 0; i < body.audio_features.length; i++) {
+        var tmp = {
+          id: body.audio_features[i].id,
+          tempo: body.audio_features[i].tempo
+        }
+        tracks.push(tmp);
+      }
+      tracks.sort(function(a,b) {
+        return a.tempo - b.tempo;
+      });
+      console.log(tracks.map(x=>'spotify:track:' + x.id));
+//      PUT https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+      var options = {
+        url: 'https://api.spotify.com/v1/users/me/playlists/' + playlist_id + '/tracks',
+        qs: {
+          uris: (tracks.map(x=>'spotify:track:' + x.id)).join(",")
+        },
+        headers: { 'Authorization': 'Bearer ' + access_token },
+        json: true
+      }
+      request.put(options,function(error,response,body) {
+        console.log(response);
+      })
+    })
+  })
   
-//  request.post(options, function(error, response, body) {
-//    console.log(response);
-//  
-//  });      
-  
+  res.redirect('/playlist#id=' + playlist_id + '&access_token=' + access_token);
 });
+
+app.get('/test',function(req,res) {
+  console.log(req.query.id);
+})
 
 app.listen(3000);
