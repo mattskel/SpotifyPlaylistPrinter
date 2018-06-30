@@ -4,7 +4,6 @@
       <h1 id="name"></h1>
       <h1>PLAYLISTS</h1>
       <div id="myList"></div>
-      <a href="/playlists" class="btn btn-primary">Spotify Playlists</a>
       <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
       <script>
         (function() {
@@ -19,13 +18,11 @@
           }
           
           function listify(response, access_token) {
-//            console.log(response);
             var list = document.createElement('ul');
             for (var i = 0; i < response.items.length; i++) {
               var item = document.createElement('li');
               var a = document.createElement('a');
               a.setAttribute('href', "/playlist#id=" + response.items[i].id + "&access_token=" + access_token);
-//              item.appendChild(document.createTextNode(response.items[i].name));
               a.appendChild(document.createTextNode(response.items[i].name));
               console.log(response.items[i]);
               item.appendChild(a);
@@ -53,14 +50,12 @@
               document.getElementById('name').innerHTML = response.id;
             }
           });
-          $.ajax({
-//            url: 'https://api.spotify.com/v1/users/mattskelley-au/playlists/4D7jMhi6n60TZi9MBuvdYk',
-            url: 'https://api.spotify.com/v1/users/me/playlists/4D7jMhi6n60TZi9MBuvdYk',
-            headers: { 'Authorization': 'Bearer ' + access_token },
-            success: function(response) {
-              console.log(response);
-            }
-          });
+//          $.ajax({
+//            url: 'https://api.spotify.com/v1/users/me/playlists/4D7jMhi6n60TZi9MBuvdYk',
+//            headers: { 'Authorization': 'Bearer ' + access_token },
+//            success: function(response) {
+//            }
+//          });
         })();
     </script>
   </body>

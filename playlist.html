@@ -3,7 +3,8 @@
   <body>
     <h1 id="name"></h1>
     <div id="playlistTracks"></div>
-    <a id="newPlaylist">Order Playlist by BPM</a>
+<!--    <a id="newPlaylist">Order Playlist by BPM</a>-->
+    <a id="orderPlaylist">Order Playlist by BPM</a>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script>
       (function() {
@@ -33,8 +34,6 @@
               url: 'https://api.spotify.com/v1/audio-features/' + track.id,
               headers: { 'Authorization': 'Bearer ' + access_token },
               success: function(response) {
-                console.log(response);
-//                temp = response.tempo;
                 
                 document.getElementById(response.id).innerHTML = document.getElementById(response.id).innerHTML + " - " + response.tempo + "bpm";
                 
@@ -48,9 +47,9 @@
         var params = getHashParams();
         var access_token = params.access_token;
         var id = params.id;
-        console.log(params.access_token);
-        console.log('HERE');
-        document.getElementById('newPlaylist').setAttribute('href','/newPlaylist/?access_token=' + access_token + '&playlist_id=' + id);
+        
+//        document.getElementById('newPlaylist').setAttribute('href','/newPlaylist/?access_token=' + access_token + '&playlist_id=' + id);
+        document.getElementById('orderPlaylist').setAttribute('href','/orderPlaylist/?access_token=' + access_token + '&playlist_id=' + id);
         
         $.ajax({
           url: 'https://api.spotify.com/v1/users/me/playlists/' + id,
