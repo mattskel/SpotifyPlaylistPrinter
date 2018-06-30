@@ -7,15 +7,6 @@ app.use('/', express.static(__dirname + '/'));
 app.use('/playlists', express.static(__dirname + '/playlists.html'));
 app.use('/playlist', express.static(__dirname + '/playlist.html'));
 
-app.get('/hello', function(req, res){
-    res.send('hello');
-});
-
-app.get('/main', function(req, res) {
-  var name = 'hello';
-  res.render(__dirname + "/test.html", {name:name});
-});
-
 var client_id = 'a2ff816c53a341db849e76d58e57cd92';
 var client_secret = 'deb4764130d840ca863761a3e781877f';
 var scope = 'user-read-private user-read-email playlist-modify-private playlist-modify-public';
@@ -132,9 +123,5 @@ app.get('/orderPlaylist', function(req,res) {
 //  res.redirect('/playlist#id=' + playlist_id + '&access_token=' + access_token);
   res.redirect('/playlists#access_token=' + access_token);
 });
-
-app.get('/test',function(req,res) {
-  console.log(req.query.id);
-})
 
 app.listen(3000);
